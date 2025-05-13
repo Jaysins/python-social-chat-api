@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 
 class User(db.Model):
@@ -9,3 +10,5 @@ class User(db.Model):
     bio = db.Column(db.Text, nullable=True)
     location = db.Column(db.String(100), nullable=True)
     picture = db.Column(db.String(), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)

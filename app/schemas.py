@@ -3,13 +3,13 @@ from .models import User
 
 
 class LoginSchema(Schema):
-    username = fields.String(required=True)
+    email = fields.String(required=True)
     password = fields.String(required=True)
 
-    @validates("username")
-    def validate_username(self, username):
-        if not User.query.filter_by(username=username.lower()).first():
-            raise ValidationError('username does not exist')
+    @validates("email")
+    def validate_email(self, email):
+        if not User.query.filter_by(email=email.lower()).first():
+            raise ValidationError('email does not exist')
 
 
 class SignupSchema(Schema):
@@ -44,5 +44,12 @@ class UserSchema(Schema):
     id = fields.String()
     picture = fields.String(allow_none=True,
                             required=False)
-    auth_token = fields.String(allow_none=True,
-                               required=False)
+    friendStatus = fields.String(allow_none=True,
+                                 required=False)
+
+
+class LoginResponseSchema(Schema):
+    user = fields.Nested(UserSchema, required=True,
+                         allow_none=False)
+    token = fields.String(allow_none=False,
+                          required=True)

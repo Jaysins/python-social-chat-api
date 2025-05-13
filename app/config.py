@@ -10,3 +10,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY",
                                     "your-jwt-secret-key")
+    JWT_HEADER_TYPE = os.getenv('JWT_HEADER_TYPE', '')

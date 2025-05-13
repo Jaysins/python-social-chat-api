@@ -1,7 +1,15 @@
-from flask import request, jsonify, Blueprint
-from app.auth.services import signup_user, login_user, get_user_by_id, get_all_users
-from app.schemas import SignupSchema, UserSchema, LoginSchema
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import request, Blueprint
+from app.auth.services import signup_user, \
+    login_user, \
+    get_user_by_id, \
+    get_all_users
+from app.schemas import SignupSchema, \
+    UserSchema, \
+    LoginSchema, LoginResponseSchema
+from flask_jwt_extended import jwt_required, \
+    get_jwt_identity
+
+from app.utils import success_response
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -15,15 +23,13 @@ def signup():
 
     data = request.get_json()
     validated_data = SignupSchema().load(data)
-
-    # username = validated_data['username']
-    # email = validated_data['email']
-    # password = validated_data['password']
-    #
-    # signup_user(username=username, password=password, email=email)
     result = signup_user(**validated_data)
-
-    return UserSchema().dump(result), 201
+    response = UserSchema().dump(result)
+    return success_response(
+        message="User signed up successfully",
+        data=response,
+        status_code=201
+    )
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -33,8 +39,12 @@ def login():
     validated_data = LoginSchema().load(data)
 
     result = login_user(**validated_data)
-
-    return UserSchema().dump(result), 200
+    response = LoginResponseSchema().dump(result)
+    return success_response(
+        message="User logged in successfully",
+        data=response,
+        status_code=201
+    )
 
 
 @auth_bp.route('/profile', methods=['GET'])
@@ -46,7 +56,12 @@ def get_profile():
     """
     user_id = get_jwt_identity()
     result = get_user_by_id(user_id)
-    return UserSchema().dump(result), 200
+    response = UserSchema().dump(result)
+    return success_response(
+        message="User profile fetched successfully",
+        data=response,
+        status_code=201
+    )
 
 
 @auth_bp.route('/users', methods=['GET'])
@@ -60,8 +75,12 @@ def get_users():
 
     results = get_all_users(user_id)
 
-    return UserSchema().dump(
-        results, many=True), 200
+    response = UserSchema().dump(results)
+    return success_response(
+        message="Users fetched successfully",
+        data=response,
+        status_code=201
+    )
 
 
 @auth_bp.route('/users/<user_id>', methods=['GET'])
@@ -74,5 +93,3 @@ def get_user_by_user_id(user_id):
     result = get_user_by_id(user_id)
 
     return UserSchema().dump(result), 200
-
-
